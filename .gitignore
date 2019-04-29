@@ -1,0 +1,11 @@
+# vim swp files
+*.swp
+
+# Pythons pyc files and related
+*.pyc
+
+# pycache folder
+__pycache__/
+
+
+
