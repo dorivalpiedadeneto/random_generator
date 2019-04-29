@@ -3,6 +3,8 @@
 
 from numpy.random import random, randn
 from math import pi
+from numpy import cos as npcos
+from numpy import sin as npsin
 
 
 def generate_fiber_center(number_of_fibers, xlim, ylim, zlim):
@@ -57,5 +59,12 @@ def compute_fiber_edges(xs, ys, zs, alphas, betas, Lf):
     - alphas and betas - angles (as describer in 'generate_angles');
     - Lf - Fiber lenght.
     '''
-    dx = 0.5 * L
+    dx = 0.5 * Lf * npcos(betas) * npsin(alphas)
+    dy = 0.5 * Lf * npsin(betas) * npsin(alphas)
+    dz = 0.5 * Lf * npcos(alphas)
+
+    xi = xs + dx; yi = ys + dy; zi = zs + dz
+    xf = xs - dx; yf = ys - dy; zf = zs - dz
+
+    return ((xi, yi, zi), (xf, yf, zf))
 
