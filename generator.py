@@ -5,6 +5,7 @@ from numpy.random import random, randn
 from math import pi
 from numpy import cos as npcos
 from numpy import sin as npsin
+from numpy import array, ndarray
 
 
 def generate_fiber_center(number_of_fibers, xlim, ylim, zlim):
@@ -67,4 +68,43 @@ def compute_fiber_edges(xs, ys, zs, alphas, betas, Lf):
     xf = xs - dx; yf = ys - dy; zf = zs - dz
 
     return ((xi, yi, zi), (xf, yf, zf))
+
+def intercepts(segment, other_segment):
+    '''
+    Returns True if two segments intercept each other; returns False, otherwise).
+    The segment is a tuple ((xi, yi), (yf, yf)); two different situations can be computed:
+    1) both segment and other_segmente are tuples of tuple, with float values for x and y;
+    2) one of the tuples contains numpy arrays instead of floats; in this case,
+    the program returns an array with True or False, values, instead of a single
+    boolean variable. This use recommend for several (thousands of) segments, for which
+    the case 1) will be considerably less efficient.
+    '''
+    # Testing if input data is consistent (maybe this testing is not so smart... but...)
+    try:
+        ((xsi,ysi),(xsf,ysf)) = segment
+        ((xosi,yosi),(xosf,yosf)) = other_segment
+        if isinstance(xsi,float) and isinstance(xsf, float) and \
+           isinstance(ysi,float) and isinstance(ysf, float):
+            if isinstance(xosi, ndarray) and isinstance(xosf, ndarray) and \
+               isinstance(yosi, ndarray) and isinstance(yosf, ndarray):
+                pass
+            elif isinstance(xosi, float) and isinstance(xosf, float) and \
+                 isinstance(yosi, float) and isinstance(yosf, float):
+                 pass
+            else:
+                raise Exception('Invalid values for input data!')
+        elif isinstance(xsi, ndarray) and isinstance(xsf, ndarray) and \
+             isinstance(ysi, ndarray) and isinstance(ysf, ndarray):
+            if isinstance(xosi, float) and isinstance(xosf, float) and \
+               isinstance(yosi, float) and isinstance(yosf, float):
+                pass
+            else:
+                raise Exception('Invalid values for input data!')
+    except:
+        raise Exception('Invalid values for input data!')
+    
+    # if it gets here, data is OK!
+    print("Data is consistent")
+
+
 
