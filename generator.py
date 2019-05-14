@@ -69,7 +69,7 @@ def compute_fiber_edges(xs, ys, zs, alphas, betas, Lf):
 
     return ((xi, yi, zi), (xf, yf, zf))
 
-def intercepts(segment, other_segment):
+def intercepts(segment, other_segment, tol = 1.0e-12):
     '''
     Returns True if two segments intercept each other; returns False, otherwise).
     The segment is a tuple ((xi, yi), (yf, yf)); two different situations can be computed:
@@ -87,24 +87,94 @@ def intercepts(segment, other_segment):
            isinstance(ysi,float) and isinstance(ysf, float):
             if isinstance(xosi, ndarray) and isinstance(xosf, ndarray) and \
                isinstance(yosi, ndarray) and isinstance(yosf, ndarray):
-                pass
+                case = "FA" # float-array
             elif isinstance(xosi, float) and isinstance(xosf, float) and \
                  isinstance(yosi, float) and isinstance(yosf, float):
-                 pass
+                 case = "FF" # float-float
             else:
                 raise Exception('Invalid values for input data!')
         elif isinstance(xsi, ndarray) and isinstance(xsf, ndarray) and \
              isinstance(ysi, ndarray) and isinstance(ysf, ndarray):
             if isinstance(xosi, float) and isinstance(xosf, float) and \
                isinstance(yosi, float) and isinstance(yosf, float):
-                pass
+                case = "FA" # float-array
             else:
                 raise Exception('Invalid values for input data!')
     except:
         raise Exception('Invalid values for input data!')
     
     # if it gets here, data is OK!
-    print("Data is consistent")
+    #print("Data is consistent")
+    
+    # Deriving the formulation
+
+    # segment (xs, ys) for a given qsi (0<=qsi<=1)
+    # xs(qsi) = xsi * (1 - qsi) + xsf * qsi
+    # ys(qsi) = ysi * (1 - qsi) + ysf * qsi
+
+    # other_segment (xos, yos) for a given eta (0<=eta<=1)
+    # xos(eta) = xosi * (1 - eta) + xosf * eta
+    # yos(eta) = yosi * (1 - eta) + yosf * eta
+    
+    # segment and other_segment cross each other when
+    # xs(qsi) == xos(eta) [eq. (I)] 
+    # and ys(qsi) == yos(eta) [eq. (II)]
+    # if segment and other_segment are not parallel
+    # and if 0<=qsi<=1 and 0<=eta<=1, they cross each other
+
+    # Deriving eq. (I)
+    # xsi * (1 - qsi) + xsf * qsi == xosi * (1 - eta) + xosf * eta
+    # (xsf - xsi) * qsi - (xosf - xosi) * eta = (xosi - xsi)
+
+    # Deriving eq. (II)
+    # ysi * (1 - qsi) + ysf * qsi == yosi * (1 - eta) + yosf * eta
+    # (ysf - ysi) * qsi - (yosf - yosi) * eta = (yosi - ysi)
+
+    # The resulting system of equation is:
+
+    # | (xsf - xsi)  -(xosf - xosi) |   | qsi |   | (xosi - xsi) |
+    # |                             | * |     | = |              |
+    # | (ysf - ysi)  -(yosf - yosi) |   | eta |   | (yosi - ysi) |
+
+    # D = (xsf - xsi) * (yosi -yosf) - (ysf -ysi) * (xosi - xosf)
+    # If the determinant D == 0, the segments are parallel segments
+    # Changing term names:
+    # A11 = (xsf - xsi); A12 = (xosi - xosf)
+    # A21 = (ysf - ysi); A22 = (yosi - yosf)
+    # B1 = (xosi - xsi); B2 = (yosi - ysi)
+    # D = A11 * A22 - A12 * A21
+    # qsi = (A22 * B1 - A12 * B2) / D (if D != 0)
+    # eta = (A11 * B2 - A21 * B1) / D (if D != 0)
+
+    A11 = (xsf - xsi); A12 = (xosi - xosf)
+    A21 = (ysf - ysi); A22 = (yosi - yosf)
+    B1 = (xosi - xsi); B2 = (yosi - ysi)
+    D = A11 * A22 - A12 * A21
+
+    if case == "FF": # Both segments are represented by float values
+        if abs(D) < tol:
+            # segment and segment are parallels
+            # need testing if they are collinear
+            result = True  # Just for now
+        else:
+        qsi = (A22 * B1 - A12 * B2) / D (if D != 0)
+        eta = (A11 * B2 - A21 * B1) / D (if D != 0)
+        if (0.0 <= qsi <= 1.0) and (0.0 <= eta <= 1.0):
+            result = True
+        else:
+            result = False
+    elif case == "FA": # One of the segments are represented by numpy arrays
+        # Just for now
+        result = None
+        
+    return result
+
+
+
+
+
+
+
 
 
 
