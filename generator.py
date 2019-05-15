@@ -6,6 +6,8 @@ from math import pi
 from numpy import cos as npcos
 from numpy import sin as npsin
 from numpy import array, ndarray
+from numpy import logical_and, logical_or
+from numpy import abs as npabs
 
 
 def generate_fiber_center(number_of_fibers, xlim, ylim, zlim):
@@ -97,7 +99,7 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
              isinstance(ysi, ndarray) and isinstance(ysf, ndarray):
             if isinstance(xosi, float) and isinstance(xosf, float) and \
                isinstance(yosi, float) and isinstance(yosf, float):
-                case = "FA" # float-array
+                case = "AF" # array-float
             else:
                 raise Exception('Invalid values for input data!')
     except:
@@ -153,9 +155,13 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
 
     if case == "FF": # Both segments are represented by float values
         if abs(D) < tol:
-            # segment and segment are parallels
-            # need testing if they are collinear
-            result = True  # Just for now
+            # segment and segment are parallels, and can be collinear
+            # However, this function is intended to be used after
+            # testing if both edges are inside a given area. In this
+            # situation, for the aimed purpose, if they are colinear
+            # the status False describes better the situation to accept
+            # the segment (one do not intercept the other)
+            result = False
         else:
         qsi = (A22 * B1 - A12 * B2) / D (if D != 0)
         eta = (A11 * B2 - A21 * B1) / D (if D != 0)
@@ -164,8 +170,17 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
         else:
             result = False
     elif case == "FA": # One of the segments are represented by numpy arrays
-        # Just for now
-        result = None
+        # Identify which determinats are lower than the tolerance!
+        prls = npabs(D) < tol # prls is an array of boolen indicating parallel lines
+        # For the same reason indicated above, parallel lines return False status 
+        # for the present function; one way to deal with this issue here is to modify
+        # D such as the computations for this case result in a cross point far away
+        # from the segment domain. In this case, a solution is to set D = tol
+        # when abs(D) < tol
+        D[prls] = tol    
+
+
+    elif case == "AF":
         
     return result
 
