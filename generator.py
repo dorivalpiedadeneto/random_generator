@@ -99,7 +99,7 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
              isinstance(ysi, ndarray) and isinstance(ysf, ndarray):
             if isinstance(xosi, float) and isinstance(xosf, float) and \
                isinstance(yosi, float) and isinstance(yosf, float):
-                case = "AF" # array-float
+                case = "FA" # float-array
             else:
                 raise Exception('Invalid values for input data!')
     except:
@@ -163,8 +163,8 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
             # the segment (one do not intercept the other)
             result = False
         else:
-        qsi = (A22 * B1 - A12 * B2) / D (if D != 0)
-        eta = (A11 * B2 - A21 * B1) / D (if D != 0)
+            qsi = (A22 * B1 - A12 * B2) / D # (if D != 0)
+            eta = (A11 * B2 - A21 * B1) / D # (if D != 0)
         if (0.0 <= qsi <= 1.0) and (0.0 <= eta <= 1.0):
             result = True
         else:
@@ -178,9 +178,13 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
         # from the segment domain. In this case, a solution is to set D = tol
         # when abs(D) < tol
         D[prls] = tol    
-
-
-    elif case == "AF":
+        # Computing the array of qsis and etas
+        qsi = (A22 * B1 - A12 * B2) / D # (if D != 0)
+        eta = (A11 * B2 - A21 * B1) / D # (if D != 0)
+        # Testing interception
+        qsis_ = logical_and(0.0<=qsi),logical_and(qsi<=1.0)
+        etas_ = logical_and(0.0<=eta),logical_and(eta<=1.0)
+        result = logical_and(qsis_, etas_)
         
     return result
 
