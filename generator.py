@@ -8,6 +8,7 @@ from numpy import sin as npsin
 from numpy import array, ndarray
 from numpy import logical_and, logical_or
 from numpy import abs as npabs
+from matplotlib.path import Path
 
 
 def generate_fiber_center(number_of_fibers, xlim, ylim, zlim):
@@ -189,7 +190,34 @@ def intercepts(segment, other_segment, tol = 1.0e-12):
         
     return result
 
-
+    def points_inside_boundary(points, boundary_vertices):
+        '''
+        points - List of (x, y) coordinates of points;
+        boundary_vertices - List  of (x, y) coordinates of the
+        points defining the boundary of an area.
+        Returns an numpy array of booleans; True if a given point
+        is inside the defined area; False, otherwise.
+        Example:
+        points = ((0.0,0.0),(2.0,2.0)) # The first inside the area,
+                                       # the second one outside.
+        boundary_vertices = ((-1.0,-1.0),
+                             ( 1.0,-1.0),
+                             ( 1.0, 1.0),
+                             (-1.0, 1.0),
+                             (-1.0,-1.0))
+        # For this case, the result is an array contains (True, False).
+        '''
+        try:
+            n = len(points) - 1
+            p = Path(boundary_vertices)
+            codes = [p.MOVETO]
+            codes += n * [p.LINETO]
+            codes += [p.CLOSEPOLY]
+            p.codes = codes
+            result = p.contains_points(points)
+        except:
+            result = None
+        return result
 
 
 
