@@ -3,7 +3,7 @@
 # Tests:
 # 01 - tests if intercepts works using floats to represent segments
 # 02 - tests if intercepts works using arrays to represent segments 
-from generator import intercepts
+from generator import intercepts, points_inside_boundary
 from numpy import array as nparray
 
 def test01():
@@ -34,9 +34,19 @@ def test02():
     print('Testing interception of {} and segments from array {}'.format(s1,s_))
     print(intercepts(s_,s1))
 
+def test03():
+    pts_ = ((0.0,0.0),(2.0,2.0))
+    bvs_ = ((-1.0,-1.0),
+            ( 1.0,-1.0),
+            ( 1.0, 1.0),
+            (-1.0, 1.0),
+            (-1.0,-1.0))
+    res = points_inside_boundary(pts_,bvs_)
+    print('Points inside area:')
+    print(res)
 
 if __name__ == "__main__":
 
     test01()
     test02()
-
+    test03()
