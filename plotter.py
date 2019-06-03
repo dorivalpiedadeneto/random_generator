@@ -1,5 +1,7 @@
 # Functions to plot the tests of random_generator
 from matplotlib.path import Path
+import matplotlib.pyplot as plt
+
 
 class Plotter(object):
     '''
@@ -13,7 +15,7 @@ class Plotter(object):
         self._fibers = {}
 
 
-    def define_boundary(vertices):
+    def define_boundary(self,vertices):
         try:
             n = len(vertices) - 2
             p = Path(vertices)
@@ -21,8 +23,14 @@ class Plotter(object):
             codes += n * [p.LINETO]
             codes += [p.CLOSEPOLY]
             p.codes = codes
-            self._boundary_path = {'path':p,'color':'black','lw':2.0}
+            coords = p._vertices
+            xmin = min(coords[:,0]),xmax = max(coords[:,0])
+            ymin = min(coords[:,1]),ymax = max(coords[:,1])
+            self._boundary_path = {'path':p,'color':'black','lw':2.0, 'limits':((xmin,ymin),(xmax,ymax))}
         except:
             raise('Invalid data for defining boundary!')
             
+    def plot():
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
