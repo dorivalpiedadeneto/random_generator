@@ -42,7 +42,9 @@ class Plotter(object):
         '''
         if name in self._fibers.keys():
             print('Fiber named {} already exists! Writing over it!'.format(name))
-          
+            fiber_data = {'coords':coords, 'color':color}
+            self._fibers[name] = fiber_data
+
 
     def plot(self):
         fig = plt.figure()
