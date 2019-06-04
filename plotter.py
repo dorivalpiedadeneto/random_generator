@@ -30,7 +30,20 @@ class Plotter(object):
             self._boundary_path = {'path':p,'color':'black','lw':2.0, 'limits':((xmin,ymin),(xmax,ymax))}
         except:
             raise('Invalid data for defining boundary!')
-            
+       
+    def add_fiber(self, name, coords, color):
+        '''
+            Expected input:
+            name: string;
+            coords: a dictionary of form {'1st_node':dict,'2nd_node':dict},
+                in which 'dict' is {'x':[coords], 'y'[coords]}, for which
+                [coords] is an array of coordinates (tuples, list, 1D numpy array...);
+            color: the color to be used for plotting the fiber.
+        '''
+        if name in self._fibers.keys():
+            print('Fiber named {} already exists! Writing over it!'.format(name))
+          
+
     def plot(self):
         fig = plt.figure()
         ax = fig.add_subplot(111)
