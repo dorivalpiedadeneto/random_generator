@@ -3,8 +3,12 @@
 # Tests:
 # 01 - tests if intercepts works using floats to represent segments
 # 02 - tests if intercepts works using arrays to represent segments 
+# 03 - tests if point in inside a previously defined area
+# 04 - tests plotting (only area boundary)
+
 from generator import intercepts, points_inside_boundary
 from numpy import array as nparray
+from plotter import Plotter
 
 def test01():
     # 1sd segment (boundary)
@@ -45,8 +49,20 @@ def test03():
     print('Points inside area:')
     print(res)
 
+def test04():
+    bvs_ = ((-1.0,-1.0),
+            ( 1.0,-1.0),
+            ( 1.0, 1.0),
+            (-1.0, 1.0),
+            (-1.0,-1.0))
+    p = Plotter()
+    p.define_boundary(bvs_)
+    p.plot()
+
+
 if __name__ == "__main__":
 
-    test01()
-    test02()
-    test03()
+#   test01()
+#   test02()
+#   test03()
+    test04()
