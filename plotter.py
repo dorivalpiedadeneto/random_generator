@@ -1,5 +1,6 @@
 # Functions to plot the tests of random_generator
 from matplotlib.path import Path
+from matplotlib.patches import PathPatch
 import matplotlib.pyplot as plt
 
 
@@ -33,4 +34,8 @@ class Plotter(object):
     def plot():
         fig = plt.figure()
         ax = fig.add_subplot(111)
+        # Adding boundary to the plot
+        if self._boundary_path:
+            p = self._boudanry
+            ptc = PathPatch()
 
